@@ -1,10 +1,7 @@
-from flask import Flask, render_template, url_for, flash, redirect
-from forms import RegistrationForm, LoginForm
-
-
-app = Flask(__name__)
-
-app.config['SECRET_KEY'] = '8876cbfb71d8a36eff20965d7d04dde1'
+from guitartotab.models import User, Tab
+from flask import render_template, url_for, flash, redirect
+from guitartotab import app
+from guitartotab.forms import RegistrationForm, LoginForm
 
 @app.route('/')
 @app.route('/home')
@@ -29,15 +26,12 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == 'admin@guitar.com' and form.password.data == 'password':
+        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
             flash('You have been logged in!', 'success')
             return redirect(url_for('home'))
         else:
-            flash('Login Unsuccessful. Please check username and password', 'danger')        
-            return redirect(url_for('home'))
-
+            flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', title='Login', form=form)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
 
