@@ -2,15 +2,16 @@ import os
 import secrets
 from PIL import Image
 from guitartotab.models import User, Tab
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, abort
 from guitartotab import app, db, bcrypt
-from guitartotab.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from guitartotab.forms import RegistrationForm, LoginForm, UpdateAccountForm, TabForm
 from flask_login import login_user, current_user, logout_user, login_required
 
 @app.route('/')
 @app.route('/home')
 def home():
-    return render_template('home.html', title='Home')
+    tabs = Tab.query.all()
+    return render_template('home.html', title='Home', tabs=tabs)
 
 
 @app.route('/about')
@@ -92,3 +93,53 @@ def account():
 
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account', image_file=image_file, form=form)
+
+
+@app.route('/tab/new', methods=['GET', 'POST'])
+@login_required
+def new_tabs():
+    form = TabForm()
+    if form.validate_on_submit():
+        tab = Tab(title=form.title.data, content=form.content.data, author=current_user)
+        db.session.add(tab)
+        db.session.commit()
+        return redirect(url_for('home'))
+        
+    return render_template('create_tab.html', title='New Tab', form=form, legend='New Tab')
+
+
+@app.route('/tab/<int:tab_id>')
+def tab(tab_id):
+    tab = Tab.query.get_or_404(tab_id)
+    return render_template('tab.html', title=tab.title, tab=tab)
+
+
+@app.route('/tab/<int:tab_id>/update', methods=['GET', 'POST'])
+@login_required
+def update_tab(tab_id):
+    tab = Tab.query.get_or_404(tab_id)
+
+    form = TabForm()
+    if form.validate_on_submit():
+        tab.title = form.title.data
+        tab.content = form.content.data
+        db.session.commit()
+        flash('Your tab has been updated!', 'success')
+        return redirect(url_for('tab', tab_id=tab.id))
+
+    elif request.method == 'GET':
+        form.title.data = tab.title
+        form.content.data = tab.content
+
+    return render_template('create_tab.html', title='Update Tab', form=form, legend='Update Tab')
+
+
+@app.route('/tab/<int:tab_id>/delete', methods=['POST'])
+@login_required
+def delete_tab(tab_id):
+    tab = Tab.query.get_or_404(tab_id)
+
+    db.session.delete(tab)
+    db.session.commit()
+    flash('Your tab has been deleted!', 'success')
+    return redirect(url_for('home'))
