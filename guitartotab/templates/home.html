@@ -1,16 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-    {% for tab in tabs %}
-        <article class="media content-section">
-          <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + tab.author.image_file) }}">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="#">{{ tab.author.username }}</a>
-              <small class="text-muted">{{ tab.date_posted.strftime('%Y-%m-%d') }}</small>
+    {% if tabs.items %}
+      {% for tab in tabs.items %}
+          <article class="media content-section">
+            <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + tab.author.image_file) }}">
+            <div class="media-body">
+              <div class="article-metadata">
+                <a class="mr-2" href="#">{{ tab.author.username }}</a>
+                <small class="text-muted">{{ tab.date_posted.strftime('%Y-%m-%d') }}</small>
+              </div>
+              <h2><a class="article-title" href="{{ url_for('tab', tab_id=tab.id) }}">{{ tab.title }}</a></h2>
+              <p class="article-content">{{ tab.content }}</p>
             </div>
-            <h2><a class="article-title" href="{{ url_for('tab', tab_id=tab.id) }}">{{ tab.title }}</a></h2>
-            <p class="article-content">{{ tab.content }}</p>
-          </div>
-        </article>
-    {% endfor %}
+          </article>
+      {% endfor %}
+      {% for page_num in tabs.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+          {% if page_num %}
+            {% if tabs.page == page_num %}
+              <a class="btn btn-info mb-4" href="{{ url_for('my_tabs', page=page_num) }}">{{ page_num }}</a>
+            {% else %}
+              <a class="btn btn-outline-info mb-4" href="{{ url_for('my_tabs', page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
+          {% else %}
+            ...
+          {% endif %}
+      {% endfor %}
+    {% else %}
+      <h1>There seem to be nothing here...</h1>
+    {% endif %}
 {% endblock content %}

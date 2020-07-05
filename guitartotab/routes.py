@@ -8,10 +8,16 @@ from guitartotab.forms import RegistrationForm, LoginForm, UpdateAccountForm, Ta
 from flask_login import login_user, current_user, logout_user, login_required
 
 @app.route('/')
-@app.route('/home')
-def home():
-    tabs = Tab.query.all()
-    return render_template('home.html', title='Home', tabs=tabs)
+@app.route('/landing')
+def landing():
+    return render_template('landing.html', title='Landing')
+
+@app.route('/my_tabs')
+def my_tabs():
+    page = request.args.get('page', 1, type=int)
+    user = current_user
+    tabs = Tab.query.filter_by(author=user).order_by(Tab.date_posted.desc()).paginate(page=page,per_page=5)
+    return render_template('home.html', title='My Tabs', tabs=tabs)
 
 
 @app.route('/about')
@@ -21,7 +27,7 @@ def about():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('my_tabs'))
 
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -37,7 +43,7 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('home'))
+        return redirect(url_for('my_tabs'))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -46,7 +52,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
+            return redirect(next_page) if next_page else redirect(url_for('my_tabs'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
 
@@ -56,7 +62,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('landing'))
 
 
 def save_picture(form_picture):
@@ -103,7 +109,7 @@ def new_tabs():
         tab = Tab(title=form.title.data, content=form.content.data, author=current_user)
         db.session.add(tab)
         db.session.commit()
-        return redirect(url_for('home'))
+        return redirect(url_for('my_tabs'))
         
     return render_template('create_tab.html', title='New Tab', form=form, legend='New Tab')
 
@@ -142,4 +148,4 @@ def delete_tab(tab_id):
     db.session.delete(tab)
     db.session.commit()
     flash('Your tab has been deleted!', 'success')
-    return redirect(url_for('home'))
+    return redirect(url_for('my_tabs'))
