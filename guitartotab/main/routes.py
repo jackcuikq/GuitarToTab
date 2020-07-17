@@ -1,6 +1,6 @@
 from flask import render_template, request, Blueprint
 from guitartotab.models import Tab
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 main = Blueprint('main', __name__)
 
@@ -14,6 +14,7 @@ def about():
     return render_template('about.html', title='About')
 
 @main.route('/my_tabs')
+@login_required
 def my_tabs():
     page = request.args.get('page', 1, type=int)
     user = current_user

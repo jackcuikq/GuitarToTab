@@ -26,8 +26,10 @@ def create_app(config_class=Config):
     from guitartotab.users.routes import users
     from guitartotab.tabs.routes import tabs
     from guitartotab.main.routes import main
+    from guitartotab.errors.handlers import errors
     app.register_blueprint(users)
     app.register_blueprint(tabs)
     app.register_blueprint(main)
+    app.register_blueprint(errors)
 
     return app
