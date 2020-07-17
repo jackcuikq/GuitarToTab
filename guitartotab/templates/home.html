@@ -9,7 +9,7 @@
                 <a class="mr-2" href="#">{{ tab.author.username }}</a>
                 <small class="text-muted">{{ tab.date_posted.strftime('%Y-%m-%d') }}</small>
               </div>
-              <h2><a class="article-title" href="{{ url_for('tab', tab_id=tab.id) }}">{{ tab.title }}</a></h2>
+              <h2><a class="article-title" href="{{ url_for('tabs.tab', tab_id=tab.id) }}">{{ tab.title }}</a></h2>
               <p class="article-content">{{ tab.content }}</p>
             </div>
           </article>
@@ -17,9 +17,9 @@
       {% for page_num in tabs.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
           {% if page_num %}
             {% if tabs.page == page_num %}
-              <a class="btn btn-info mb-4" href="{{ url_for('my_tabs', page=page_num) }}">{{ page_num }}</a>
+              <a class="btn btn-info mb-4" href="{{ url_for('main.my_tabs', page=page_num) }}">{{ page_num }}</a>
             {% else %}
-              <a class="btn btn-outline-info mb-4" href="{{ url_for('my_tabs', page=page_num) }}">{{ page_num }}</a>
+              <a class="btn btn-outline-info mb-4" href="{{ url_for('main.my_tabs', page=page_num) }}">{{ page_num }}</a>
             {% endif %}
           {% else %}
             ...

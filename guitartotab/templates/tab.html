@@ -7,7 +7,7 @@
           <a class="mr-2" href="#">{{ tab.author.username }}</a>
           <small class="text-muted">{{ tab.date_posted.strftime('%Y-%m-%d') }}</small>
           <div>
-            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_tab', tab_id=tab.id) }}">Update</a>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('tabs.update_tab', tab_id=tab.id) }}">Update</a>
             <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
           </div>
         </div>
@@ -27,7 +27,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <form action="{{ url_for('delete_tab', tab_id=tab.id) }}" method="POST">
+          <form action="{{ url_for('tabs.delete_tab', tab_id=tab.id) }}" method="POST">
             <input class="btn btn-danger" type="submit" value="Delete">
           </form>
         </div>
