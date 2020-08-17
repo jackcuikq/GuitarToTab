@@ -96,3 +96,7 @@ a.article-title:hover {
 .mt-0 {
   padding-top: 40px !important
 }
+
+.top-buffer { 
+  margin-top: 40px ; 
+}

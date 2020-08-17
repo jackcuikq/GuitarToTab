@@ -4,6 +4,7 @@ from PIL import Image
 from flask import url_for, current_app
 from flask_mail import Message
 from guitartotab import mail
+import wave
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
@@ -19,6 +20,17 @@ def save_picture(form_picture):
 
     return picture_fn
 
+def save_audio(form_audio):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_audio.filename)
+    audio_fn = random_hex + f_ext
+    audio_path = os.path.join(current_app.root_path, 'static/tab_audio', audio_fn)
+
+    f = wave.open(form_audio)
+
+    f.save(picture_path)
+
+    return audio_path
 
 def send_reset_email(user):
     token = user.get_reset_token()

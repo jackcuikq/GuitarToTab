@@ -1,9 +1,13 @@
 from flask import (Blueprint, render_template, url_for, flash, redirect,
-                    request, abort)
+                    request, abort, current_app)
 from flask_login import current_user, login_required
 from guitartotab import db
 from guitartotab.models import Tab
 from guitartotab.tabs.forms import TabForm
+from guitartotab.AudioToTab import *
+from werkzeug.utils import secure_filename
+import os
+import librosa
 
 tabs = Blueprint('tabs', __name__)
 
@@ -12,13 +16,21 @@ tabs = Blueprint('tabs', __name__)
 def new_tabs():
     form = TabForm()
     if form.validate_on_submit():
-        tab = Tab(title=form.title.data, content=form.content.data, author=current_user)
+        audio = request.files['file']
+        filename = secure_filename(audio.filename)
+        audio.save(os.path.join(current_app.root_path, 'static/tab_audio', filename))
+
+        y, sr = librosa.load(os.path.join(current_app.root_path, 'static/tab_audio', filename))
+        
+        tab_content = AudioToTab(y, sr)   
+
+        tab = Tab(title=form.title.data, content=tab_content, author=current_user)
         db.session.add(tab)
         db.session.commit()
         return redirect(url_for('main.my_tabs'))
         
-    return render_template('create_tab.html', title='New Tab', form=form, legend='New Tab')
-
+    #return render_template('create_tab.html', title='New Tab', form=form, legend='New Tab')
+    return render_template('tab_audio.html', title='Record or Upload Audio', form=form)
 
 @tabs.route('/tab/<int:tab_id>')
 def tab(tab_id):

@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block content %}
+<main>
+    <div>
+        <h2>Record Audio</h2>
+    </div>
+    <div class="btn-group form-group">
+        <button type="button" class="btn btn-secondary" id="btnStart">Start Recording</button>
+        <button type="button" class="btn btn-danger" id="btnStop">Stop Recording</button>
+    </div>
+    <div class="top-buffer">
+        <h4>Audio Playback</h4>
+        <audio id="aud2" controls></audio>
+    </div>
+    <div class="content-section">
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <div class="form-group">
+                    {{ form.title.label(class="form-control-label") }}
+                    {% if form.title.errors %}
+                        {{ form.title(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.title(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.audio.label() }}
+                    <input type="file" name="file" class="form-control-file">
+                    {% if form.audio.errors %}
+                        {% for error in form.audio.errors %}
+                            <span class="text-danger">{{ error }}</span></br>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+    
+</main>    
+<script>
+    
+    let constraintObj = { 
+        audio: true, 
+        video: false
+    }; 
+    
+    
+    //handle older browsers that might implement getUserMedia in some way
+    if (navigator.mediaDevices === undefined) {
+        navigator.mediaDevices = {};
+        navigator.mediaDevices.getUserMedia = function(constraintObj) {
+            let getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            if (!getUserMedia) {
+                return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+            }
+            return new Promise(function(resolve, reject) {
+                getUserMedia.call(navigator, constraintObj, resolve, reject);
+            });
+        }
+    }else{
+        navigator.mediaDevices.enumerateDevices()
+        .then(devices => {
+            devices.forEach(device=>{
+                console.log(device.kind.toUpperCase(), device.label);
+                //, device.deviceId
+            })
+        })
+        .catch(err=>{
+            console.log(err.name, err.message);
+        })
+    }
+
+    navigator.mediaDevices.getUserMedia(constraintObj)
+    .then(function(mediaStreamObj) {
+        
+        //add listeners for saving video/audio
+        let start = document.getElementById('btnStart');
+        let stop = document.getElementById('btnStop');
+        let audSave = document.getElementById('aud2');
+        let mediaRecorder = new MediaRecorder(mediaStreamObj);
+        let chunks = [];
+        
+        start.addEventListener('click', (ev)=>{
+            mediaRecorder.start();
+            console.log(mediaRecorder.state);
+        })
+        stop.addEventListener('click', (ev)=>{
+            mediaRecorder.stop();
+            console.log(mediaRecorder.state);
+        });
+        mediaRecorder.ondataavailable = function(ev) {
+            chunks.push(ev.data);
+        }
+        mediaRecorder.onstop = (ev)=>{
+            let blob = new Blob(chunks, { 'type' : 'audio/wav; codecs=0' });
+            chunks = [];
+            let audioURL = URL.createObjectURL(blob);
+            audSave.src =  audioURL;
+            
+        }
+    })
+    .catch(function(err) { 
+        console.log(err.name, err.message); 
+    });
+    
+    /*********************************
+    getUserMedia returns a Promise
+    resolve - returns a MediaStream Object
+    reject returns one of the following errors
+    AbortError - generic unknown cause
+    NotAllowedError (SecurityError) - user rejected permissions
+    NotFoundError - missing media track
+    NotReadableError - user permissions given but hardware/OS error
+    OverconstrainedError - constraint video settings preventing
+    TypeError - audio: false, video: false
+    *********************************/
+</script>
+
+{% endblock content %}
