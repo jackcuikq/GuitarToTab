@@ -5,4 +5,4 @@ This app is meant to be used as a "notebook" for short guitar riffs.
 The app is built with Flask and the script for converting WAV to tab is written in Python using the Librosa audio library.
 
 Screenshots:
-[Landing](/demo_pics/landing.png)
+![Landing](/demo_pics/landing.png)
