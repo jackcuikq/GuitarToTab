@@ -12,60 +12,60 @@ def AudioToTab(y, sr):
 
 
 def FretsToText(frets):
-    highE = ["E|"]
-    B = ["B|"]
-    G = ["G|"]
-    D = ["D|"]
-    A = ["A|"]
-    lowE = ["e|"]
+    highE = ["|"]
+    B = ["|"]
+    G = ["|"]
+    D = ["|"]
+    A = ["|"]
+    lowE = ["|"]
     for (x,y) in frets:
         if x == 6:
             highE.append(str(y) + "-")
-            B.append("- -")
-            G.append("- -")
-            D.append("- -")
-            A.append("- -")
-            lowE.append("- -")
+            B.append(" - - ")
+            G.append(" - - ")
+            D.append(" - - ")
+            A.append(" - - ")
+            lowE.append(" - - ")
 
         elif x == 5:
             B.append(str(y) + "-")
-            highE.append("- -")
-            G.append("- -")
-            D.append("- -")
-            A.append("- -")
-            lowE.append("- -")
+            highE.append(" - - ")
+            G.append(" - - ")
+            D.append(" - - ")
+            A.append(" - - ")
+            lowE.append(" - - ")
 
         elif x == 4:
             G.append(str(y) + "-")
-            B.append("- -")
-            highE.append("- -")
-            D.append("- -")
-            A.append("- -")
-            lowE.append("- -")
+            B.append(" - - ")
+            highE.append(" - - ")
+            D.append(" - - ")
+            A.append(" - - ")
+            lowE.append(" - - ")
 
         elif x == 3:
             D.append(str(y) + "-")
-            B.append("- -")
-            G.append("- -")
-            highE.append("- -")
-            A.append("- -")
-            lowE.append("- -")
+            B.append(" - - ")
+            G.append(" - - ")
+            highE.append(" - - ")
+            A.append(" - - ")
+            lowE.append(" - - ")
 
         elif x == 2:
             A.append(str(y) + "-")
-            B.append("- -")
-            G.append("- -")
-            D.append("- -")
-            highE.append("- -")
-            lowE.append("- -")
+            B.append(" - - ")
+            G.append(" - - ")
+            D.append(" - - ")
+            highE.append(" - - ")
+            lowE.append(" - - ")
 
         else:
             lowE.append(str(y + "-"))
-            B.append("- -")
-            G.append("- -")
-            D.append("- -")
-            A.append("- -")
-            highE.append("- -")
+            B.append(" - - ")
+            G.append(" - - ")
+            D.append(" - - ")
+            A.append(" - - ")
+            highE.append(" - - ")
     
     tab = ""
     for i in range (len(highE)):
