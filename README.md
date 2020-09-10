@@ -4,7 +4,10 @@ This app is meant to be used as a "notebook" for short guitar riffs.
 
 The app is built with Flask and the script for converting WAV to tab is written in Python using the [Librosa](https://github.com/librosa/librosa) audio library.
 
-Screenshots:
+## Usage
+Users can create an account to begin recording and accessing their tablature. After creating an account users can navigate to the "Create Tab" page where they can upload their guitar audio.
+
+## Screenshots:
 ![Landing](/demo_pics/landing.png)
 -----
 ![Register](/demo_pics/register.png)
